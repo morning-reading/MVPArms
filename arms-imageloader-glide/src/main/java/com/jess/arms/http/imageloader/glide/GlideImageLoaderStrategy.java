@@ -17,12 +17,14 @@ package com.jess.arms.http.imageloader.glide;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.Registry;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -62,20 +64,18 @@ public class GlideImageLoaderStrategy implements BaseImageLoaderStrategy<ImageCo
 
         GlideRequest<Drawable> glideRequest = requests.load(config.getUrl());
 
-        switch (config.getCacheStrategy()) {//缓存策略
-            case 0:
-                glideRequest.diskCacheStrategy(DiskCacheStrategy.ALL);
-                break;
-            case 1:
+        switch (config.getCacheStrategy()) {
+            //缓存策略
+            case CacheStrategy.NONE:
                 glideRequest.diskCacheStrategy(DiskCacheStrategy.NONE);
                 break;
-            case 2:
+            case CacheStrategy.RESOURCE:
                 glideRequest.diskCacheStrategy(DiskCacheStrategy.RESOURCE);
                 break;
-            case 3:
+            case CacheStrategy.DATA:
                 glideRequest.diskCacheStrategy(DiskCacheStrategy.DATA);
                 break;
-            case 4:
+            case CacheStrategy.AUTOMATIC:
                 glideRequest.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
                 break;
             default:
@@ -108,13 +108,19 @@ public class GlideImageLoaderStrategy implements BaseImageLoaderStrategy<ImageCo
         }
 
         if (config.getPlaceholder() != 0)//设置占位符
+        {
             glideRequest.placeholder(config.getPlaceholder());
+        }
 
         if (config.getErrorPic() != 0)//设置错误的图片
+        {
             glideRequest.error(config.getErrorPic());
+        }
 
         if (config.getFallback() != 0)//设置请求 url 为空图片
+        {
             glideRequest.fallback(config.getFallback());
+        }
 
         glideRequest
                 .into(config.getImageView());
@@ -157,5 +163,10 @@ public class GlideImageLoaderStrategy implements BaseImageLoaderStrategy<ImageCo
     @Override
     public void applyGlideOptions(@NonNull Context context, @NonNull GlideBuilder builder) {
         Timber.i("applyGlideOptions");
+    }
+
+    @Override
+    public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
+        Timber.i("registerComponents");
     }
 }
